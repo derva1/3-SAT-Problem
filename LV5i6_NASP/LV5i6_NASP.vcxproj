@@ -24,6 +24,7 @@
     <ProjectGuid>{a12f1d93-c224-4b73-8039-816121fb4115}</ProjectGuid>
     <RootNamespace>LV5i6NASP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>3-SAT-problem</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
