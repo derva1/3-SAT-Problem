@@ -51,13 +51,7 @@ public:
             }
             outer_vec.push_back(inner_vec);  // add the inner vector to the outer vector
         }
-        for (int i = 0; i < outer_vec.size(); i++) {
-            std::vector<int> inner_vec = outer_vec.at(i);
-            for (int j = 0; j < inner_vec.size(); j++) {
-                std::cout << inner_vec.at(j) << " ";
-            }
-            std::cout << std::endl;
-        }
+        
 
         tabelaKomb = outer_vec;
     }
@@ -117,20 +111,63 @@ public:
     }
 
     bool Verifikacija_3_CNF(std::vector<int> argumenti) {
-        return provjeriKlauze(std::move(argumenti));
+        return provjeriKlauze(argumenti);
     }
 };
 
+
+class KlikaINDSETGraf {
+    std::vector<std::vector<int>> graf, matrica_susjedstva, obrnutoGraf, matrica_susjedstva_obrnuto;
+
+
+
+
+public:
+
+    void unosGrafa() {
+        
+        
+        int dimenzija;
+        std::cout << "Unesite dimenzije matrice(jedan broj) \n";
+        std::cin >> dimenzija;
+        graf.resize(dimenzija, std::vector<int>(dimenzija));
+        obrnutoGraf.resize(dimenzija,std::vector<int>(dimenzija));
+
+        std::cout << "Unesite elemente matrice: \n";
+        for (int i = 0; i < dimenzija; i++) {
+            for (int j = 0; j < dimenzija; j++) {
+                int unos;
+                std::cin >> unos;
+                graf.at(i).at(j) = unos;
+                if (unos) obrnutoGraf.at(i).at(j) = 0;
+                else obrnutoGraf.at(i).at(j) = 1;
+            }
+        }
+
+        // Spasavanje indexa susjeda u matrici za oba problema
+        for (int i = 0; i < graf.size(); i++) {
+            std::vector<int> susjed;
+            for (int j = 0; j < graf.at(i).size(); j++) if (graf.at(i).at(j) == 1) susjed.push_back(j);
+            matrica_susjedstva.push_back(susjed);
+        }
+
+        for (int i = 0; i < graf.size(); i++) {
+            std::vector<int> susjed;
+            for (int j = 0; j < obrnutoGraf.at(i).size(); j++) if (obrnutoGraf.at(i).at(j) == 1) susjed.push_back(j);
+            matrica_susjedstva_obrnuto.push_back(susjed);
+        }
+    }
+
+};
+
 int main() {
-    int unos;
-    std::vector<int> argumenti; 
-    argumenti.push_back(1);
-    argumenti.push_back(1);
-    argumenti.push_back(1);
-       
-    Formula_3_CNF<int> formula;
-    //formula.Verifikacija_3_CNF(argumenti);
     
+    int unos;  
+    Formula_3_CNF<int> formula;
+    KlikaINDSETGraf graf;
+    //int K;
+    std::vector<int> vec;
+    //std::vector<int> verifikacioniVektor;
     do {
         std::cout << "Dobrodosli u program za rad sa 3-SAT problemom i k-indsetom i clique-om.\n"
             "Pritisnite 1 - Za unos logicke formule \n"
@@ -151,13 +188,35 @@ int main() {
             formula.Unos_3_CNF();
             std::cout << "Unos uspjesno zavrsen.\n\n\n";
             break;
+
+        case 2:
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Odabrali ste unos grafa.\n";
+            graf.unosGrafa();
+            std::cout << "Unos uspjesno zavrsen.\n\n\n";
+            break;
         case 3:
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "\nOdabrali ste ispitivanje da li je logicka formula ispunjiva. Ispod ovog teksta su rezultati. \n";
             if (formula.Rjesenje_3_CNF()) std::cout << "Logicka formula je ispunjiva! \n\n\n";
             break;
+
+        /*case 4:
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Odabrali ste ispitivanje da li u grafu ima K nezavisnih cvorova. Unesite broj K: \n";
+            
+            std::cin >> K;
+            std::cout << "Za " << K << "cvorova funkcija daje izlaz: " << graf.Rjesenje_K_INDSET(K) << std::endl;
+            break;*/
+        /*case 5:
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Odabrali ste ispitivanje da li u grafu ima K klika. Unesite broj K: \n";
+            
+            std::cin >> K;
+            std::cout << "Za " << K << "cvorova funkcija daje izlaz: " << graf.Rjesenje_K_Clique(K) << std::endl;
+            break;*/
         case 6: 
-            std::vector<int> vec;
+            
             int broj;
             std::cout << "Odabrali ste verifikaciju vektor. Unesite vrijednosti literala, za zavrsetak unijeti -1:  " << std::endl;
 
@@ -166,28 +225,34 @@ int main() {
                 if (broj != -1) vec.push_back(broj);
             } while (broj != -1);
 
-            std::cout << "Verifikacija unesene vrijednosti: " << formula.Verifikacija_3_CNF(vec) << std::endl;
+            std::cout << "Verifikacija unesene vrijednosti: " << formula.Verifikacija_3_CNF(vec) << std::endl << std::endl;
             break;
+        /*case 7:
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Odabrali ste verifikaciju nezavisnih cvorova.";
+            std::cout << "Unesite nezavisne cvorove numerisano od 0, za zavrsetak unijeti -1:  " << std::endl;
+            
+            do {
+                std::cin >> broj;
+                if (broj != -1) verifikacioniVektor.push_back(broj);
+            } while (broj != -1);
+
+            std::cout << "Verifikacija skupa nezavisnih cvorova: " << graf.Verifikacija_K_INDSET(verifikacioniVektor) << std::endl;
+            break;*/
+        /*case 8:
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Odabrali ste verifikaciju K-Klike";
+            std::cout << "Unesite nezavisne cvorove numerisano od 0, za zavrsetak unijeti -1:  " << std::endl;
+            
+            do {
+                std::cin >> broj;
+                if (broj != -1) verifikacioniVektor.push_back(broj);
+            } while (broj != -1);
+
+            std::cout << "Verifikacija skupa nezavisnih cvorova: " << graf.verifikacijaKKlike(verifikacioniVektor) << std::endl;
+            break;*/
         }
     } while (unos != 9);
     
-  /*Formula_3_CNF<int> proba;
-  int dimenzija ;
-  std::cout << "Unesite dimenzije matrice(ne vece od 8x3): \n";
-  std::cin >> dimenzija;
-  proba.Unos_3_CNF(dimenzija);
-  if(proba.Rjesenje_3_CNF()) std::cout << "Data formula je ispunjiva! \n";
-  std::vector<bool> v; 
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  v.push_back(false);
-  if (!proba.Verifikacija_3_CNF(v)) std::cout << "Vektor koji ste zadali nije rjesiv.\n";
-  else std::cout << "Vektor koji ste zadali je rjesiv.\n";*/
   return 0;
 }
